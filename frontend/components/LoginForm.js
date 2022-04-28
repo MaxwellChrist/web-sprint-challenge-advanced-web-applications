@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import PT from 'prop-types'
+import axiosWithAuth from '../axios'
 
 const initialFormValues = {
   username: '',
@@ -8,6 +9,7 @@ const initialFormValues = {
 export default function LoginForm(props) {
   const [values, setValues] = useState(initialFormValues)
   // ✨ where are my props? Destructure them here
+  const { login, setMessage, setSpinnerOn } = props
 
   const onChange = evt => {
     const { id, value } = evt.target
@@ -15,8 +17,11 @@ export default function LoginForm(props) {
   }
 
   const onSubmit = evt => {
-    evt.preventDefault()
+    evt.preventDefault();
     // ✨ implement
+    login(values);
+    setMessage("");
+    setSpinnerOn(true);
   }
 
   const isDisabled = () => {
@@ -43,7 +48,7 @@ export default function LoginForm(props) {
         placeholder="Enter password"
         id="password"
       />
-      <button disabled={isDisabled()} id="submitCredentials">Submit credentials</button>
+      <button onClick={() => login} disabled={isDisabled()} id="submitCredentials">Submit credentials</button>
     </form>
   )
 }
