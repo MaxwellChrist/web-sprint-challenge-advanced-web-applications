@@ -1,8 +1,8 @@
 import React from 'react'
-import { Route, Navigate } from 'react-router-dom';
+import { Route, Navigate, Outlet } from 'react-router-dom';
 
-const ProtectedRoute = ({component: Component, ...rest}) => {
-    return <Route 
+const ProtectedRoute = ({element: Component, ...rest}) => {
+    return <Outlet 
         {...rest}
         render={(props) => {
             if(localStorage.getItem("token")) {
@@ -11,7 +11,7 @@ const ProtectedRoute = ({component: Component, ...rest}) => {
                 return <Navigate to="/" />
             }
         }}
-        />
+    />
 }
 
 export default ProtectedRoute
