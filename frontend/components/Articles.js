@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import PT from 'prop-types'
 import axios from 'axios';
 
@@ -19,14 +19,12 @@ export default function Articles(props) {
   // ✨ implement conditional logic: if no token exists
   // we should render a Navigate to login screen (React Router v.6)
   if(!window.localStorage.getItem("token")) {
-    return <Navigate to="/" />
+    return <Redirect to="/" />
   }
   useEffect(() => {
     // ✨ grab the articles here, on first render only
     getArticles()
   }, [])
-
-  console.log(articles)
 
   return (
     // ✨ fix the JSX: replace `Function.prototype` with actual functions
@@ -34,7 +32,7 @@ export default function Articles(props) {
     <div className="articles">
       <h2>Articles</h2>
       {
-        ![].length
+        !articles.length
           ? 'No articles yet'
           : articles.map(art => {
             return (

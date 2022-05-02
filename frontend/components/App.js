@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { NavLink, Routes, Route, useNavigate, Switch } from 'react-router-dom'
+import { NavLink, Route, useHistory, Switch } from 'react-router-dom'
 import Articles from './Articles'
 import LoginForm from './LoginForm'
 import Message from './Message'
@@ -21,10 +21,7 @@ export default function App(props) {
   const [currentArticleId, setCurrentArticleId] = useState()
   const [spinnerOn, setSpinnerOn] = useState(false)
 
-  // ✨ Research `useNavigate` in React Router v.6
-  const navigate = useNavigate()
-  const redirectToLogin = () => { navigate('/')} 
-  const redirectToArticles = () => { navigate('/articles') }
+  const { push } = useHistory()
 
   const logout = () => {
     // ✨ implement
@@ -34,7 +31,7 @@ export default function App(props) {
     // using the helper above.
     window.localStorage.removeItem("token");
     setMessage("Goodbye!");
-    redirectToLogin();
+    push("/")
   }
 
   const login = ({ username, password }) => {
@@ -49,7 +46,7 @@ export default function App(props) {
     .then(res => {
       window.localStorage.setItem("token", res.data.token)
       setMessage(res.data.message);
-      redirectToArticles()
+      push("/articles")
       setSpinnerOn(false)
     })
     .catch(err => {
@@ -78,8 +75,8 @@ export default function App(props) {
     })
     .catch(err => {
       console.log(err);
-      redirectToLogin()
       setSpinnerOn(false)
+      push("/")
     })
   }
 
@@ -111,217 +108,27 @@ return (
         <NavLink id="loginScreen" to="/">Login</NavLink>
         <NavLink id="articlesScreen" to="/articles">Articles</NavLink>
       </nav>
-      <Routes>
-        <Route path="/" element={<LoginForm setSpinnerOn={setSpinnerOn} setMessage={setMessage} login={login}/>} />
-        <Route element={<ProtectedRoute/>}>
-          <Route 
-            path="articles"
-            element={<Articles
-              articles={articles} 
-              getArticles={getArticles} 
-              deleteArticle={deleteArticle} 
-              setCurrentArticleId={setCurrentArticleId}
-              /> 
-            }
-          />
-          <Route 
-            path="articles" 
-            element={<ArticleForm 
-              postArticle={postArticle} 
-              updateArticle={updateArticle}
-              setCurrentArticleId={setCurrentArticleId}
-              /> 
-            }
-          /> 
-        </Route>
-      </Routes>
+        <Switch>
+          <ProtectedRoute2 path="/articles">
+              <ArticleForm 
+                postArticle={postArticle} 
+                updateArticle={updateArticle}
+                setCurrentArticleId={setCurrentArticleId}
+            /> 
+            <Articles
+                articles={articles} 
+                getArticles={getArticles} 
+                deleteArticle={deleteArticle} 
+                setCurrentArticleId={setCurrentArticleId}
+                updateArticle={updateArticle}
+            />
+          </ProtectedRoute2>
+          <Route exact path="/">
+            <LoginForm setSpinnerOn={setSpinnerOn} setMessage={setMessage} login={login}/>
+          </Route>
+        </Switch>
       <footer>Bloom Institute of Technology 2022</footer>
     </div>
   </React.StrictMode>
   )
 }
-
-/////////////////////////////11111111111111111//////////////////// - most recent and last git push
-
-// return (
-//   // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
-// <React.StrictMode>
-//   <Spinner on={spinnerOn} />
-//   <Message message={message}/>
-//   <button id="logout" onClick={logout}>Logout from app</button>
-//   <div id="wrapper" style={{ opacity: spinnerOn ? "0.25" : "1" }}> {/* <-- do not change this line */}
-//     <h1>Advanced Web Applications</h1>
-//     <nav>
-//       <NavLink id="loginScreen" to="/">Login</NavLink>
-//       <NavLink id="articlesScreen" to="/articles">Articles</NavLink>
-//     </nav>
-//     <Routes>
-//       <Route path="/" element={<LoginForm setSpinnerOn={setSpinnerOn} setMessage={setMessage} login={login}/>} />
-//       <Route element={<ProtectedRoute/>}>
-//         <Route 
-//           path="articles"
-//           element={<Articles
-//             articles={articles} 
-//             getArticles={getArticles} 
-//             deleteArticle={deleteArticle} 
-//             setCurrentArticleId={setCurrentArticleId}
-//             /> 
-//           }
-//         />
-//        </Route>
-
-//        <Route element={<ProtectedRoute/>}>
-//         <Route 
-//           path="articles" 
-//           element={<ArticleForm 
-//             postArticle={postArticle} 
-//             updateArticle={updateArticle}
-//             setCurrentArticleId={setCurrentArticleId}
-//             /> 
-//           }
-//         /> 
-//       </Route>
-//     </Routes>
-//     <footer>Bloom Institute of Technology 2022</footer>
-//   </div>
-// </React.StrictMode>
-// )
-// }
-
-/////////////////////////////3333333333333333333333333333333333////////////////////
-
-// return (
-//   // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
-//   <React.StrictMode>
-//     <Spinner on={spinnerOn} />
-//     <Message message={message} />
-//     <button id="logout" onClick={logout}>Logout from app</button>
-//     <div id="wrapper" style={{ opacity: spinnerOn ? "0.25" : "1" }}> {/* <-- do not change this line */}
-//       <h1>Advanced Web Applications</h1>
-//       <nav>
-//         <NavLink id="loginScreen" to="/">Login</NavLink>
-//         <NavLink id="articlesScreen" to="/articles">Articles</NavLink>
-//       </nav>
-//       <Routes>
-//         <Route path="/" element={<LoginForm setSpinnerOn={setSpinnerOn} setMessage={setMessage} login={login}/>} />
-//         <Route path="articles" element={
-//           <ProtectedRoute3>
-//             <Route
-//             path=""
-//               component={ArticleForm} 
-//               postArticle={postArticle} 
-//               updateArticle={updateArticle}
-//               setCurrentArticleId={setCurrentArticleId}
-//             />
-//           </ProtectedRoute3>
-//         } />
-//         <Route path="articles" element={
-//           <ProtectedRoute3>
-//             <Route
-//               path=""
-//               component={Articles} 
-//               articles={articles} 
-//               getArticles={getArticles} 
-//               deleteArticle={deleteArticle} 
-//               setCurrentArticleId={setCurrentArticleId}
-//             />
-//           </ProtectedRoute3>
-//         } />
-//       </Routes>
-//       <footer>Bloom Institute of Technology 2022</footer>
-//     </div>
-//   </React.StrictMode>
-//   )
-// }
-
-//////////////////////////////////1////////////////////
-
-{/* <Routes>
-<Route path="/" element={<LoginForm setSpinnerOn={setSpinnerOn} setMessage={setMessage} login={login}/>} />
-<ProtectedRoute 
-  path="articles" 
-  component={Articles} 
-  articles={articles} 
-  getArticles={getArticles} 
-  deleteArticle={deleteArticle} 
-  setCurrentArticleId={setCurrentArticleId}
-/>
-<ProtectedRoute 
-  path="articles" 
-  component={ArticleForm} 
-  postArticle={postArticle} 
-  updateArticle={updateArticle}
-  setCurrentArticleId={setCurrentArticleId}
-/>
-</Routes> */}
-
-//////////////////////////////////////////////////2//////////////////////////////////////////////////////////////////
-
-// return (
-//   // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
-// <React.StrictMode>
-//   <Spinner on={spinnerOn} />
-//   <Message message={message}/>
-//   <button id="logout" onClick={logout}>Logout from app</button>
-//   <div id="wrapper" style={{ opacity: spinnerOn ? "0.25" : "1" }}> {/* <-- do not change this line */}
-//     <h1>Advanced Web Applications</h1>
-//     <nav>
-//       <NavLink id="loginScreen" to="/">Login</NavLink>
-//       <NavLink id="articlesScreen" to="/articles">Articles</NavLink>
-//     </nav>
-//     <Routes>
-//         <Route path="/" element={<LoginForm setSpinnerOn={setSpinnerOn} setMessage = {setMessage} login={login}/>} />
-//         <ProtectedRoute2 path="articles">
-//           <ArticleForm
-//             postArticle={postArticle}
-//             updateArticle={updateArticle}
-//             setCurrentArticleId={setCurrentArticleId}
-//           />
-//         </ProtectedRoute2>
-//         <ProtectedRoute2 path="articles">
-//           <Articles
-//             articles={articles} 
-//             getArticles={getArticles} 
-//             deleteArticle={deleteArticle} 
-//             setCurrentArticleId={setCurrentArticleId}
-//           />
-//         </ProtectedRoute2>
-//     </Routes>
-//     <footer>Bloom Institute of Technology 2022</footer>
-//   </div>
-// </React.StrictMode>
-// )
-// }
-
-//////////////////////////////////////////3///////////////////////////////////////////////////////////////////////////
-
-// return (
-//   // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
-//   <React.StrictMode>
-//     <Spinner on={spinnerOn} />
-//     <Message message={message} />
-//     <button id="logout" onClick={logout}>Logout from app</button>
-//     <div id="wrapper" style={{ opacity: spinnerOn ? "0.25" : "1" }}> {/* <-- do not change this line */}
-//       <h1>Advanced Web Applications</h1>
-//       <nav>
-//         <NavLink id="loginScreen" to="/">Login</NavLink>
-//         <NavLink id="articlesScreen" to="/articles">Articles</NavLink>
-//       </nav>
-//       <Routes>
-//         <Route path="/" element={<LoginForm setSpinnerOn={setSpinnerOn} setMessage={setMessage} login={login}/>} />
-//         <Route path="articles" element={
-//           <ProtectedRoute3>
-//             <ArticleForm postArticle={postArticle} updateArticle={updateArticle} setCurrentArticleId={setCurrentArticleId}/>
-//           </ProtectedRoute3>
-//         } />
-//         <Route path="articles" element={
-//           <ProtectedRoute3>
-//             <Articles articles={articles} getArticles={getArticles} deleteArticle={deleteArticle} setCurrentArticleId={setCurrentArticleId}/>
-//           </ProtectedRoute3>
-//         } />
-//       </Routes>
-//       <footer>Bloom Institute of Technology 2022</footer>
-//     </div>
-//   </React.StrictMode>
-//   )
-// }
