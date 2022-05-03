@@ -102,6 +102,15 @@ export default function App(props) {
   const updateArticle = ({ article_id, article }) => {
     // ✨ implement
     // You got this!
+    axiosWithAuth().put(`${articlesUrl}/${article_id}`, article)
+    .then(res => {
+      console.log(res)
+      debugger
+    })
+    .catch(err => {
+      console.log(err)
+      debugger
+    })
   }
 
   const deleteArticle = article_id => {
