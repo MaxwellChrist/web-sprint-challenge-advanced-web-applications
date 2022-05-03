@@ -84,10 +84,14 @@ export default function App(props) {
     // The flow is very similar to the `getArticles` function.
     // You'll know what to do! Use log statements or breakpoints
     // to inspect the response from the server.
+    setMessage("");
+    setSpinnerOn(true)
     axiosWithAuth().post(articlesUrl, article)
     .then(res => {
       console.log(res)
       setArticles([...articles, res.data.article])
+      setMessage(res.data.message);
+      setSpinnerOn(false)
     })
     .catch(err => {
       console.log(err)
@@ -120,6 +124,7 @@ return (
           <ProtectedRoute2 path="/articles">
               <ArticleForm 
                 postArticle={postArticle} 
+                updateArticle={updateArticle}
                 article={articles.find(item => item.article_id === currentArticleId)}
                 currentArticleId={currentArticleId}
             /> 
