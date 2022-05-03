@@ -5,7 +5,6 @@ import axios from 'axios';
 
 export default function Articles(props) {
 
-  // ✨ where are my props? Destructure them here
   const { 
     getArticles, 
     articles, 
@@ -14,21 +13,17 @@ export default function Articles(props) {
     setCurrentArticleId,
     deleteArticle,
     updateArticle,
+    updateArticleId,
   } = props
 
-  // ✨ implement conditional logic: if no token exists
-  // we should render a Navigate to login screen (React Router v.6)
   if(!window.localStorage.getItem("token")) {
     return <Redirect to="/" />
   }
   useEffect(() => {
-    // ✨ grab the articles here, on first render only
     getArticles()
   }, [])
 
   return (
-    // ✨ fix the JSX: replace `Function.prototype` with actual functions
-    // and use the articles prop to generate articles
     <div className="articles">
       <h2>Articles</h2>
       {
@@ -43,7 +38,7 @@ export default function Articles(props) {
                   <p>Topic: {art.topic}</p>
                 </div>
                 <div>
-                  <button onClick={() => updateArticle(art.article_id, art)}>Edit</button>
+                  <button onClick={() => updateArticleId(art.article_id)}>Edit</button>
                   <button onClick={() => deleteArticle(art.article_id)}>Delete</button>
                 </div>
               </div>
