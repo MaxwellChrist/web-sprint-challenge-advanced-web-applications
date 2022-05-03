@@ -106,6 +106,20 @@ export default function App(props) {
 
   const deleteArticle = article_id => {
     // ✨ implement
+    setSpinnerOn(true)
+    axiosWithAuth().delete(`${articlesUrl}/${article_id}`)
+    .then(res => {
+      setMessage(res.data.message)
+      setArticles(articles.filter(item => {
+        return item.article_id !== article_id
+      }))
+      setSpinnerOn(true)
+    })
+    .catch(err => {
+      console.log(err);
+      debugger
+      setSpinnerOn(true)
+    })
   }
 
 return (
@@ -118,7 +132,7 @@ return (
       <h1>Advanced Web Applications</h1>
       <nav>
         <NavLink id="loginScreen" to="/">Login</NavLink>
-        <NavLink id="articlesScreen" to="/articles">Articles</NavLink>
+        <NavLink id="articlesScreen" to={!window.localStorage.getItem("token") ? "/" : "/articles"}>Articles</NavLink>
       </nav>
         <Switch>
           <ProtectedRoute2 path="/articles">
@@ -127,6 +141,7 @@ return (
                 updateArticle={updateArticle}
                 article={articles.find(item => item.article_id === currentArticleId)}
                 currentArticleId={currentArticleId}
+                setCurrentArticleId={setCurrentArticleId}
             /> 
             <Articles
                 articles={articles} 
